@@ -1,0 +1,23 @@
+Milestones Datamining
+Dec 7
+- Boxplots/Outlier detection (Natasha) + Model pipeline (Pavel) 
+** Start writing Abstract, Introduction, Related work
+** Give report more structure
+
+Dec 14
+- Model pipeline (Pavel) -- done 
+- Data pre-processed (Natasha) -- done
+- Abstract --- done
+- Simplify the inspirational code
+** Work on documenting application domain and the research problem 
+** Work on documenting previous work
+** Document preprocessing method
+
+
+Dec 21
+- Compare methods (pipeline, but also preprocessing)
+- Finish first draft 
+
+Jan 5th
+- Finish document + code
+
