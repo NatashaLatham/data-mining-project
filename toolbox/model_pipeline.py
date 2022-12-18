@@ -45,7 +45,7 @@ def create_model(config):
 
 def train_model(get_model, data, config):
     X = data[config['features']]
-    y = data['rent']
+    y = data[config['y_feature']]
     model = None
     if config['model_selection'] == 'kfold':
         kf = KFold(**config['model_selection_params'], random_state=config['random_state'])
