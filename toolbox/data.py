@@ -30,28 +30,98 @@ def read_data(path='data/properties.json'):
     return data
 
 def process_roommates(input_data):
-    roommates_cleaned = input_data["roommates"].copy()
+    cleaned = input_data["roommates"].copy()
     for i, roommate in enumerate(input_data["roommates"]):
         if type(roommate) == str or roommate is None:
             if roommate is None or roommate == 'None':
-                roommates_cleaned[i] = 0
+                cleaned[i] = 0
             elif roommate.isnumeric():
-                roommates_cleaned[i] = int(roommate)
+                cleaned[i] = int(roommate)
             elif roommate == "More than 8":
-                roommates_cleaned[i] = 9
+                cleaned[i] = 9
             else:
                 # happens when roommate is 'Unknown'
-                roommates_cleaned[i] = -1
+                cleaned[i] = -1
         else:
             # happens when roommate is nan
-            roommates_cleaned[i] = -1
-    return roommates_cleaned.astype("int64")
+            cleaned[i] = -1
+    return cleaned.astype("int64")
 
-# def read_json_properties():
+def process_energy_label(input_data):
+    cleaned = input_data["energyLabel"].copy()
+    labels = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6}
+    for i, label in enumerate(input_data["energyLabel"]):
+        if type(label) == str and label is not 'Unknown':
+            cleaned[i] = labels[label]
+        else:
+            # happens when roommate is nan or Unknown
+            cleaned[i] = -1
+    return cleaned.astype("int64")
 
+def process_external_id(input_data):
+    # has value room, studio, apartment, anti? (336 records), student%20residence? (5 records)
+    return [x.split('-')[0] for x in input_data['externalId']]
+
+def process_furnished(input_data):
+    return [x for x in input_data['furnished'] if x]
+
+
+def process_gender(input_data):
+    cleaned = input_data["gender"].copy()
+    genders = {'Mixed': 0, 'Female': 1, 'Male': 2}
+    for i, gender in enumerate(input_data["gender"]):
+        if type(gender) == str and gender != 'Unknown':
+            cleaned[i] = genders[gender]
+        else:
+            # happens when gender is nan, None or Unknown
+            cleaned[i] = -1
+    return cleaned.astype("int64")
+
+def process_internet(input_data):
+    # can be Yes, Unknown, No or nan
+    cleaned = input_data["internet"].copy()
+    internet_option = {'No': 0, 'Yes': 1}
+    for i, option in enumerate(input_data["internet"]):
+        if type(option) == str and option != 'Unknown':
+            cleaned[i] = internet_option[option]
+        else:
+            # happens when internet is nan or Unknown
+            cleaned[i] = -1
+    return cleaned.astype("int64")
+
+def process_is_room_active(input_data):
+    # can be true, false or nan
+    cleaned = input_data["isRoomActive"].copy()
+    internet_option = {'false': 0, 'true': 1}
+    for i, option in enumerate(input_data["isRoomActive"]):
+        if type(option) == str:
+            cleaned[i] = internet_option[option]
+        else:
+            # happens when internet is nan
+            cleaned[i] = -1
+    return cleaned.astype("int64")
+
+def process_kitchen_or_living(input_data, key):
+    # can be true, false or nan
+    cleaned = input_data[key].copy()
+    internet_option = {'Shared': 0, 'Own': 1}
+    for i, option in enumerate(input_data[key]):
+        if type(option) == str and option not in ['Unknown', 'None']:
+            cleaned[i] = internet_option[option]
+        else:
+            # happens when internet is nan
+            cleaned[i] = -1
+    return cleaned.astype("int64")
+
+def process_kitchen(input_data):
+    return process_kitchen_or_living(input_data, 'kitchen')
+def process_living(input_data):
+    return process_kitchen_or_living(input_data, 'living')
 
 if __name__ == '__main__':
     data = read_data('../data/properties.json')
-    print(type(data["roommates"][96]))
-    data["roommates_cleaned"] = process_roommates(data)
+    # print(type(data["roommates"][96]))
+    data["living_cleaned"] = process_living(data)
+    # [i for i, x in enumerate(data['gender']) if x is None]
+    # ext_Id = [x.split('-')[0] for x in data['externalId']]
     print(data.shape)
