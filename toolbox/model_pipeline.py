@@ -5,7 +5,7 @@ from sklearn.neural_network import MLPRegressor
 from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeRegressor
 
-from toolbox.data import read_data
+from toolbox.data import read_data, process_roommates
 
 
 def preprocess_data(config):
@@ -17,7 +17,7 @@ def preprocess_data(config):
     data['gender'] = LabelEncoder().fit_transform(data['gender'])
     data['matchStatus'] = LabelEncoder().fit_transform(data['matchStatus'])
     data['pets'] = LabelEncoder().fit_transform(data['pets'])
-    data['roommates'] = LabelEncoder().fit_transform(data['roommates'])  # todo: this is not a good idea
+    data['roommates'] = process_roommates(data)
     data['shower'] = LabelEncoder().fit_transform(data['shower'])
     data['smokingInside'] = LabelEncoder().fit_transform(data['smokingInside'])
     data['toilet'] = LabelEncoder().fit_transform(data['toilet'])
