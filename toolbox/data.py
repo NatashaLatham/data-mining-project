@@ -51,7 +51,7 @@ def process_energy_label(input_data):
     cleaned = input_data["energyLabel"].copy()
     labels = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6}
     for i, label in enumerate(input_data["energyLabel"]):
-        if type(label) == str and label is not 'Unknown':
+        if type(label) == str and label != 'Unknown':
             cleaned[i] = labels[label]
         else:
             # happens when roommate is nan or Unknown
@@ -63,6 +63,7 @@ def process_external_id(input_data):
     return [x.split('-')[0] for x in input_data['externalId']]
 
 def process_furnished(input_data):
+    # TODO: check what the empty means, perhaps make into own category
     return [x for x in input_data['furnished'] if x]
 
 
@@ -91,6 +92,7 @@ def process_internet(input_data):
 
 def process_is_room_active(input_data):
     # can be true, false or nan
+    # TODO: what does this actually mean?
     cleaned = input_data["isRoomActive"].copy()
     internet_option = {'false': 0, 'true': 1}
     for i, option in enumerate(input_data["isRoomActive"]):
@@ -104,12 +106,12 @@ def process_is_room_active(input_data):
 def process_kitchen_or_living(input_data, key):
     # can be true, false or nan
     cleaned = input_data[key].copy()
-    internet_option = {'Shared': 0, 'Own': 1}
+    options = {'Shared': 0, 'Own': 1}
     for i, option in enumerate(input_data[key]):
         if type(option) == str and option not in ['Unknown', 'None']:
-            cleaned[i] = internet_option[option]
+            cleaned[i] = options[option]
         else:
-            # happens when internet is nan
+            # happens when option is nan
             cleaned[i] = -1
     return cleaned.astype("int64")
 
@@ -118,10 +120,44 @@ def process_kitchen(input_data):
 def process_living(input_data):
     return process_kitchen_or_living(input_data, 'living')
 
+def process_match_capacity(input_data):
+    # can be 1 person .. 5 persons, nan, > 5 persons, Not important
+    key = 'matchCapacity'
+    cleaned = input_data[key].copy()
+
+    for i, option in enumerate(input_data[key]):
+        if type(option) == str:
+            split_data = option.split(' ')[0]
+
+            if split_data.isnumeric():
+                cleaned[i] = int(split_data)
+            elif split_data == '>':
+                cleaned[i] = 6
+            else:
+                #happens when Not important
+                cleaned[i] = 0
+        else:
+            # happens when option is nan
+            cleaned[i] = -1
+    return cleaned.astype("int64")
+
+def process_pets(input_data):
+    # can be No, Yes, nan, By mutual agreement
+    key = 'pets'
+    cleaned = input_data[key].copy()
+    options = {'No': 0, 'Yes': 1, 'By mutual agreement':2}
+    for i, option in enumerate(input_data[key]):
+        if type(option) == str:
+            cleaned[i] = options[option]
+        else:
+            # happens when internet is nan or Unknown
+            cleaned[i] = -1
+    return cleaned.astype("int64")
+
 if __name__ == '__main__':
     data = read_data('../data/properties.json')
     # print(type(data["roommates"][96]))
-    data["living_cleaned"] = process_living(data)
+    data["pets_cleaned"] = process_pets(data)
     # [i for i, x in enumerate(data['gender']) if x is None]
     # ext_Id = [x.split('-')[0] for x in data['externalId']]
     print(data.shape)

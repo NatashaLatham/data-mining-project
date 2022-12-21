@@ -1,0 +1,67 @@
+Used to check numerical data: np.any(~(data['additionalCosts'].unique() > 0))
+
+source - only has kamernet
+additionalCosts - float64 -- tbd
+-- [x for x in (data['additionalCosts'].unique()) if type(x) == int]
+areaSqm - int64 -- only numbers above 0
+
+city - 739 unique cities..
+-- sorted_city = data['city'].unique()
+-- sorted_city.sort()
+
+deposit -- float64
+
+descriptionTranslated -- string, empty or filled, perhaps checking if its temporary
+[x_ for x_ in (data['descriptionTranslated'].unique()) if not x_]
+
+energyLabel -- ABCDEFG, nan or 'Unknown'
+
+externalId - contains room or studio in name O:
+
+furnish - Unfurnished, Furnished, Uncarpeted, ''
+
+gender - Female, Male, nan, None, Unknown, Mixed
+
+internet - Yes, Unknown, No or nan
+
+matchAge - 1126 unique values, consists of min and max age
+- minimum and maximum age
+- regex search panda series
+- use https://pandas.pydata.org/docs/reference/api/pandas.Series.str.extract.html
+
+
+matchCapacity - 8 unique values, processed
+matchGender - same as Gender
+matchLanguages - 257 unique values..
+-- variations of Dutch, English or Dutch and English
+
+matchStatus - 17 unique values
+-- variations of Student, Working student, Working, Looking for a job, nan
+
+pageDescription - process as empty and non-empty?
+pageTitle - same?
+
+pets - No, Yes, nan, By mutual agreement
+
+propertyType - same as externalId? O:
+
+*META DATA*
++ columns - all column names
++ crawlStatus - done or unavailable
++ crawledAt - date
++ datesPublished - date
++ coverImageUrl
++ dtypes
++ firstSeenAt
++ flags
++ lastSeenAt
++ longitude
++ latitude
++ postalCode
++ postedAgo
+
+
+
+
+
+
