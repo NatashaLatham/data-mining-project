@@ -5,15 +5,15 @@ from sklearn.neural_network import MLPRegressor
 from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeRegressor
 
-from toolbox.data import read_data, process_roommates, process_energy_label,process_furnished,process_property_type, process_gender, process_internet, process_kitchen, process_living, process_pets, process_smoking_inside, process_shower, process_toilet, process_match_capacity
+from toolbox.data import read_data, process_roommates, process_energy_label,process_furnish,process_property_type, process_gender, process_internet, process_kitchen, process_living, process_pets, process_smoking_inside, process_shower, process_toilet, process_match_capacity
 
 
 def preprocess_data(config):
     # Preprocess data
-    data = read_data('../data/properties.json')
+    data = read_data()
 
     data['energyLabel'] = process_energy_label(data)
-    data['furnish'] = process_furnished(data)
+    data['furnish'] = process_furnish(data)
     data['gender'] = process_gender(data)
     data['internet'] = process_internet(data)
     data['kitchen'] = process_kitchen(data)

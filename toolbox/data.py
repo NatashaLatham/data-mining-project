@@ -32,6 +32,7 @@ def read_data(path='data/properties.json'):
     data['_id'] = data['_id'].apply(lambda x: x['$oid'])
     return data
 
+
 def process_roommates(input_data):
     cleaned = input_data["roommates"].copy()
     for i, roommate in enumerate(input_data["roommates"]):
@@ -50,6 +51,7 @@ def process_roommates(input_data):
             cleaned[i] = -1
     return cleaned.astype("int64")
 
+
 def process_energy_label(input_data):
     cleaned = input_data["energyLabel"].copy()
     labels = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6}
@@ -61,13 +63,27 @@ def process_energy_label(input_data):
             cleaned[i] = -1
     return cleaned.astype("int64")
 
+
 def process_external_id(input_data):
     # has value room, studio, apartment, anti? (336 records), student%20residence? (5 records)
     return [x.split('-')[0] for x in input_data['externalId']]
 
-def process_furnished(input_data):
+
+def process_furnish(input_data):
     # TODO: check what the empty means, perhaps make into own category
-    return [x for x in input_data['furnished'] if x]
+    # can be No, Yes, nan, By mutual agreement
+    key = 'furnish'
+    cleaned = input_data[key].copy()
+    options = {'Unfurnished': 0, 'Furnished': 1, 'Uncarpeted': 2}
+    for i, option in enumerate(input_data[key]):
+        if type(option) == str and option != '':
+            cleaned[i] = options[option]
+        else:
+            # happens when furnish is empty
+            cleaned[i] = -1
+    return cleaned.astype("int64")
+
+    return [x for x in input_data['furnish'] if x]
 
 
 def process_gender(input_data):
@@ -81,6 +97,7 @@ def process_gender(input_data):
             cleaned[i] = -1
     return cleaned.astype("int64")
 
+
 def process_internet(input_data):
     # can be Yes, Unknown, No or nan
     cleaned = input_data["internet"].copy()
@@ -92,6 +109,7 @@ def process_internet(input_data):
             # happens when internet is nan or Unknown
             cleaned[i] = -1
     return cleaned.astype("int64")
+
 
 def process_is_room_active(input_data):
     # can be true, false or nan
@@ -106,6 +124,7 @@ def process_is_room_active(input_data):
             cleaned[i] = -1
     return cleaned.astype("int64")
 
+
 def process_kitchen_or_living_or_toilet(input_data, key):
     # can be true, false or nan
     cleaned = input_data[key].copy()
@@ -118,10 +137,14 @@ def process_kitchen_or_living_or_toilet(input_data, key):
             cleaned[i] = -1
     return cleaned.astype("int64")
 
+
 def process_kitchen(input_data):
     return process_kitchen_or_living_or_toilet(input_data, 'kitchen')
+
+
 def process_living(input_data):
     return process_kitchen_or_living_or_toilet(input_data, 'living')
+
 
 def process_match_capacity(input_data):
     # can be 1 person .. 5 persons, nan, > 5 persons, Not important
@@ -137,18 +160,19 @@ def process_match_capacity(input_data):
             elif split_data == '>':
                 cleaned[i] = 6
             else:
-                #happens when Not important
+                # happens when Not important
                 cleaned[i] = 0
         else:
             # happens when option is nan
             cleaned[i] = -1
     return cleaned.astype("int64")
 
+
 def process_pets(input_data):
     # can be No, Yes, nan, By mutual agreement
     key = 'pets'
     cleaned = input_data[key].copy()
-    options = {'No': 0, 'Yes': 1, 'By mutual agreement':2}
+    options = {'No': 0, 'Yes': 1, 'By mutual agreement': 2}
     for i, option in enumerate(input_data[key]):
         if type(option) == str:
             cleaned[i] = options[option]
@@ -157,9 +181,11 @@ def process_pets(input_data):
             cleaned[i] = -1
     return cleaned.astype("int64")
 
+
 def process_property_type(input_data):
     types = {'Room': 0, 'Studio': 1, 'Apartment': 2, 'Anti-squat': 3, 'Student residence': 4}
     return [types[property_type] for property_type in input_data['propertyType']]
+
 
 def process_shower(input_data):
     key = 'shower'
@@ -173,11 +199,12 @@ def process_shower(input_data):
             cleaned[i] = -1
     return cleaned.astype("int64")
 
+
 def process_smoking_inside(input_data):
     # can be No, Yes, nan, Not important
     key = 'smokingInside'
     cleaned = input_data[key].copy()
-    options = {'No': 0, 'Yes': 1, 'Not important':2}
+    options = {'No': 0, 'Yes': 1, 'Not important': 2}
     for i, option in enumerate(input_data[key]):
         if type(option) == str:
             cleaned[i] = options[option]
@@ -186,11 +213,12 @@ def process_smoking_inside(input_data):
             cleaned[i] = -1
     return cleaned.astype("int64")
 
+
 def process_toilet(input_data):
     return process_kitchen_or_living_or_toilet(input_data, 'toilet')
 
-def plot_data(data):
 
+def plot_data(data):
     # attributes_1 = ["areaSqm", "rent", "roommates"]
     attributes_1 = ["areaSqm", "rent"]
 
@@ -205,10 +233,10 @@ def plot_data(data):
     fig.subplots_adjust(hspace=0.5, wspace=0.4)
 
     for n in range(x):
-    #     print(axes[n])
-    #     print("d: ", list(map(lambda x: 0 if x == 'None' else int(x), d[:,n])))
-    #     d[:,n] = list(map(lambda x: 0 if x == 'None' or x == 'Unknown' else int(x), d[:,n]))
-        axes[n].boxplot(d[:,n])
+        #     print(axes[n])
+        #     print("d: ", list(map(lambda x: 0 if x == 'None' else int(x), d[:,n])))
+        #     d[:,n] = list(map(lambda x: 0 if x == 'None' or x == 'Unknown' else int(x), d[:,n]))
+        axes[n].boxplot(d[:, n])
         # sns.boxplot(wine_data[:, n], ax=axes[n // 3, n % 3])
         axes[n].set(title=attributes_1[n])
     plt.show()
@@ -224,10 +252,8 @@ def plot_data(data):
 
 if __name__ == '__main__':
     data = read_data('../data/properties.json')
-    # print(type(data["roommates"][96]))
-    data['toilet_cleaned'] = process_toilet(data)
-    # availability = [x.split(' - ')[1] for x in data['process_smoking_inside']]
-    # We can parse
-    # data[["firstSeenAt", "lastSeenAt", "isRoomActive", "crawledAt", "datesPublished"]]
-    # data[data["lastSeenAt"].apply(lambda x: x.date()) != data["crawledAt"].apply(lambda x: x.date())]
+    data['furnish_cleaned'] = process_furnish(data)
+
+#     # data[["firstSeenAt", "lastSeenAt", "isRoomActive", "crawledAt", "datesPublished"]]
+#     # data[data["lastSeenAt"].apply(lambda x: x.date()) != data["crawledAt"].apply(lambda x: x.date())]
     print(data.shape)
