@@ -5,22 +5,28 @@ from sklearn.neural_network import MLPRegressor
 from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeRegressor
 
-from toolbox.data import read_data, process_roommates
+from toolbox.data import read_data, process_roommates, process_energy_label,process_furnished,process_property_type, process_gender, process_internet, process_kitchen, process_living, process_pets, process_smoking_inside, process_shower, process_toilet, process_match_capacity
 
 
 def preprocess_data(config):
     # Preprocess data
     data = read_data('../data/properties.json')
 
-    data['furnish'] = LabelEncoder().fit_transform(data['furnish'])
-    data['propertyType'] = LabelEncoder().fit_transform(data['propertyType'])
-    data['gender'] = LabelEncoder().fit_transform(data['gender'])
-    data['matchStatus'] = LabelEncoder().fit_transform(data['matchStatus'])
-    data['pets'] = LabelEncoder().fit_transform(data['pets'])
+    data['energyLabel'] = process_energy_label(data)
+    data['furnish'] = process_furnished(data)
+    data['gender'] = process_gender(data)
+    data['internet'] = process_internet(data)
+    data['kitchen'] = process_kitchen(data)
+    data['living'] = process_living(data)
+    data['matchCapacity'] = process_match_capacity(data)
+    # data['matchStatus'] = LabelEncoder().fit_transform(data['matchStatus'])
+
+    data['pets'] = process_pets(data)
+    data['propertyType'] = process_property_type(data)
     data['roommates'] = process_roommates(data)
-    data['shower'] = LabelEncoder().fit_transform(data['shower'])
-    data['smokingInside'] = LabelEncoder().fit_transform(data['smokingInside'])
-    data['toilet'] = LabelEncoder().fit_transform(data['toilet'])
+    data['shower'] = process_shower(data)
+    data['smokingInside'] = process_smoking_inside(data)
+    data['toilet'] = process_toilet(data)
 
     assert ptypes.is_numeric_dtype(data['rent'])
     assert ptypes.is_numeric_dtype(data['additionalCosts'])

@@ -19,6 +19,9 @@ energyLabel -- ABCDEFG, nan or 'Unknown'
 externalId - contains room or studio in name O:
 
 furnish - Unfurnished, Furnished, Uncarpeted, ''
+-- 362 empty values
+-- some furnished, others unfurnished or uncarpeted.
+-- Seems like an error, either from the users who posted
 
 gender - Female, Male, nan, None, Unknown, Mixed
 
@@ -28,7 +31,7 @@ matchAge - 1126 unique values, consists of min and max age
 - minimum and maximum age
 - regex search panda series
 - use https://pandas.pydata.org/docs/reference/api/pandas.Series.str.extract.html
-
+- pandas.Series.str.extract
 
 matchCapacity - 8 unique values, processed
 matchGender - same as Gender
@@ -43,18 +46,39 @@ pageTitle - same?
 
 pets - No, Yes, nan, By mutual agreement
 
-propertyType - same as externalId? O:
+propertyType - 'Room', 'Studio', 'Apartment', 'Anti-squat', 'Student residence'
+-- most records are Room, Studio or Apartment
+-- 5 records are Student residence
+-- 336 are Anti-squat/anti kraak --> like renting, except much more temporary and
+they can evict you with a minimal of 2 weeks notice
+
+rawAvailability - has starting date available for rent and enddate or indefinite period
+-- 01-09-'19 - 31-08-'20
+-- 26-06-'19 - Indefinite period
+
+rent - int64
+
+rentDetail - Utilities incl. or empty (means exclusive gas/electricity)
+-- 13220 empty
+-- 33502 incl (remaining records)
+
+shower -- shared, own, unknown, nan, 'None'
+-- 29 records with 'None' -> seems like a mistake, incomplete, some are shared, others own
+-- 7631 records Unknown.., energyLabel, gender and kitchen are also unknown (for most)
+--
 
 *META DATA*
 + columns - all column names
 + crawlStatus - done or unavailable
 + crawledAt - date
+--- Same as lastSeenAt
 + datesPublished - date
 + coverImageUrl
 + dtypes
 + firstSeenAt
 + flags
 + lastSeenAt
+--- Same as crawledAt
 + longitude
 + latitude
 + postalCode
