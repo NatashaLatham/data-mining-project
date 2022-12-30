@@ -34,6 +34,7 @@ matchAge - 1126 unique values, consists of min and max age
 - pandas.Series.str.extract
 
 matchCapacity - 8 unique values, processed
+-- suitable for..
 matchGender - same as Gender
 matchLanguages - 257 unique values..
 -- variations of Dutch, English or Dutch and English

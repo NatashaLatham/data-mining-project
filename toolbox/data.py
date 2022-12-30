@@ -145,6 +145,7 @@ def process_kitchen(input_data):
 def process_living(input_data):
     return process_kitchen_or_living_or_toilet(input_data, 'living')
 
+# TODO: MatchAge, MatchLangauge, MatchStatus
 
 def process_match_capacity(input_data):
     # can be 1 person .. 5 persons, nan, > 5 persons, Not important
@@ -254,6 +255,8 @@ if __name__ == '__main__':
     data = read_data('../data/properties.json')
     data['furnish_cleaned'] = process_furnish(data)
 
+    s = pd.Series(['a1', 'b2', 'c3'])
+    s.str.extract(r'([ab])(\d)')
 #     # data[["firstSeenAt", "lastSeenAt", "isRoomActive", "crawledAt", "datesPublished"]]
 #     # data[data["lastSeenAt"].apply(lambda x: x.date()) != data["crawledAt"].apply(lambda x: x.date())]
     print(data.shape)
