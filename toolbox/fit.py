@@ -30,7 +30,7 @@ CONFIG = {
         # 'matchStatus',
         'pets',
         'propertyType',
-        'rent',
+        # 'rent',
         'roommates',
         'shower',
         'smokingInside',
