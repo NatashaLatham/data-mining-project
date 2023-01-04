@@ -1,0 +1,15 @@
+name: data-mining-project
+channels:
+  - conda-forge
+
+dependencies:
+  - python
+  - geopandas
+  - jupyter
+  - matplotlib
+  - numpy
+  - pandas
+  - scikit-learn
+  - seaborn
+  - tqdm
+  - pyarrow

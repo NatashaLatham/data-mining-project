@@ -23,7 +23,7 @@ def to_date_series(series):
     return pd.to_datetime(series)
 
 
-def read_data(path='data/properties.json'):
+def read_data(path='data/properties.json', config=None):
     """Load data from JSON and return a DataFrame"""
     data = pd.read_json(path, lines=True)
     date_columns = ['crawledAt', 'firstSeenAt', 'lastSeenAt', 'detailsCrawledAt']
@@ -82,8 +82,6 @@ def process_furnish(input_data):
             # happens when furnish is empty
             cleaned[i] = -1
     return cleaned.astype("int64")
-
-    return [x for x in input_data['furnish'] if x]
 
 
 def process_gender(input_data):

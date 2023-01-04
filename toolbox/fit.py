@@ -1,7 +1,16 @@
-from toolbox.data import read_data
+import os
+from itertools import product
+
+from tqdm import tqdm
+import pandas as pd
+
 from toolbox.model_pipeline import preprocess_data, create_model, train_model
 
 CONFIG = {
+    # preprocessing
+    # 'preprocessing': 'label_encoder',
+    'preprocessing': 'custom',
+
     # 'model': 'decision_tree',
     # 'model_params': {},
 
@@ -13,12 +22,13 @@ CONFIG = {
 
     # 'model': 'mlp',
     # 'model_params': {},
+
     'y_feature': 'rent',
 
     'features': [
         # 'additionalCosts',
         'areaSqm',
-        # 'city',
+        'city',
         # 'deposit',
         'energyLabel',
         'furnish',
@@ -27,7 +37,7 @@ CONFIG = {
         'kitchen',
         'living',
         'matchCapacity',
-        # 'matchStatus',
+        'matchStatus',
         'pets',
         'propertyType',
         # 'rent',
@@ -37,23 +47,53 @@ CONFIG = {
         'toilet',
     ],
 
+    'filter_city': False,
+    # 'filter_city': True,
+    # 'city': 'Amsterdam',
+
     'random_state': 42,
 
-    'model_selection': 'kfold',
-    'model_selection_params': {
-        'n_splits': 5,
-        'shuffle': True,
-    },
-
-    # 'model_selection': 'train_test_split',
+    # 'model_selection': 'kfold',
     # 'model_selection_params': {
-    #     'test_size': 0.2,
+    #     'n_splits': 5,
     #     'shuffle': True,
     # },
+
+    'model_selection': 'train_test_split',
+    'model_selection_params': {
+        'test_size': 0.2,
+        'shuffle': True,
+    },
 }
 
 
-if __name__ == '__main__':
-    data = preprocess_data(CONFIG)
-    train_model(lambda: create_model(CONFIG), data, CONFIG)
+def pipeline(config):
+    data = preprocess_data(config)
+    model, score = train_model(lambda: create_model(config), data, config)
+    return score
 
+
+if __name__ == '__main__':
+    pipeline(CONFIG)
+    results = []
+    for use_amsterdam, (model, params) in tqdm(list(product([True, False], [
+        ('decision_tree', {}),
+        ('random_forest', {}),
+        ('boosted_tree', {}),
+        ('mlp', {}),
+    ]))):
+        config = CONFIG.copy()
+        config['filter_city'] = use_amsterdam
+        config['city'] = 'Amsterdam'
+        config['model'] = model
+        config['model_params'] = params
+        score = pipeline(config)
+        results.append({
+            'use_amsterdam': use_amsterdam,
+            'model': model,
+            'score': score,
+        })
+    results_df = pd.DataFrame(results)
+    os.makedirs('results', exist_ok=True)
+    results_df.to_parquet('results/model_scores.parquet')
+    print(results_df)
