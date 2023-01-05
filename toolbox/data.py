@@ -4,16 +4,23 @@ import json
 import math
 import seaborn as sns
 import matplotlib.pyplot as plt
+from shapely.geometry import Point
 
 
-def read_coastline(path='data/2019_ggd_regios_kustlijn.gpkg'):
+def read_coastline(path='data/2019_ggd_regios_kustlijn.gpkg', crs=None):
     """Load data from GeoPackage and return a GeoDataFrame"""
-    return gpd.read_file(path)
+    data = gpd.read_file(path)
+    if crs is not None:
+        return data.to_crs(crs)
+    return data
 
 
-def read_geojson(path='data/GEBIED_BUURTCOMBINATIES_EXWATER.geojson'):
+def read_geojson(path='data/GEBIED_BUURTCOMBINATIES_EXWATER.geojson', crs=None):
     """Load data from GeoJSON and return a GeoDataFrame"""
-    return gpd.read_file(path)
+    data = gpd.read_file(path)
+    if crs is not None:
+        return data.to_crs(crs)
+    return data
 
 
 def to_date_series(series):
@@ -23,14 +30,18 @@ def to_date_series(series):
     return pd.to_datetime(series)
 
 
-def read_data(path='data/properties.json', config=None):
+def read_data(path='data/properties.json', config=None, crs=None):
     """Load data from JSON and return a DataFrame"""
     data = pd.read_json(path, lines=True)
     date_columns = ['crawledAt', 'firstSeenAt', 'lastSeenAt', 'detailsCrawledAt']
     for column in date_columns:
         data[column] = to_date_series(data[column])
     data['_id'] = data['_id'].apply(lambda x: x['$oid'])
-    return data
+    geo_data = gpd.GeoDataFrame(data, crs={'init': 'epsg:4326'},
+         geometry=[Point(coord) for coord in zip(data['longitude'], data['latitude'])])
+    if crs is not None:
+        return geo_data.to_crs(epsg=crs)
+    return geo_data
 
 
 def process_roommates(input_data):
