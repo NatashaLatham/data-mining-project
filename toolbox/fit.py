@@ -51,6 +51,9 @@ CONFIG = {
     # 'filter_city': True,
     # 'city': 'Amsterdam',
 
+    'save_error_plot': True,
+    # 'save_error_plot': False,
+
     'random_state': 42,
 
     # 'model_selection': 'kfold',
@@ -69,8 +72,8 @@ CONFIG = {
 
 def pipeline(config):
     data = preprocess_data(config)
-    model, score = train_model(lambda: create_model(config), data, config)
-    return score
+    model, score, average_error, average_error_amsterdam = train_model(lambda: create_model(config), data, config)
+    return score, average_error, average_error_amsterdam
 
 
 if __name__ == '__main__':
@@ -94,11 +97,13 @@ if __name__ == '__main__':
         config['city'] = 'Amsterdam'
         config['model'] = model
         config['model_params'] = params
-        score = pipeline(config)
+        score, average_error, average_error_amsterdam = pipeline(config)
         results.append({
             'use_amsterdam': use_amsterdam,
             'model': model,
             'score': score,
+            'average_error': average_error,
+            'average_error_amsterdam': average_error_amsterdam,
         })
     results_df = pd.DataFrame(results)
     os.makedirs('results', exist_ok=True)
