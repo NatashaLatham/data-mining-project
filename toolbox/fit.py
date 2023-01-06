@@ -1,7 +1,7 @@
 import os
 from itertools import product
 
-from tqdm import tqdm
+# from tqdm import tqdm
 import pandas as pd
 
 from toolbox.model_pipeline import preprocess_data, create_model, train_model
