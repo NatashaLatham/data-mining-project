@@ -64,14 +64,7 @@ def process_energy_label(input_data):
     return cleaned.astype("int64")
 
 
-def process_external_id(input_data):
-    # has value room, studio, apartment, anti? (336 records), student%20residence? (5 records)
-    return [x.split('-')[0] for x in input_data['externalId']]
-
-
 def process_furnish(input_data):
-    # TODO: check what the empty means, perhaps make into own category
-    # can be No, Yes, nan, By mutual agreement
     key = 'furnish'
     cleaned = input_data[key].copy()
     options = {'Unfurnished': 0, 'Furnished': 1, 'Uncarpeted': 2}
@@ -104,21 +97,20 @@ def process_internet(input_data):
         if type(option) == str and option != 'Unknown':
             cleaned[i] = internet_option[option]
         else:
-            # happens when internet is nan or Unknown
+            # happens when is nan or Unknown
             cleaned[i] = -1
     return cleaned.astype("int64")
 
 
 def process_is_room_active(input_data):
     # can be true, false or nan
-    # TODO: what does this actually mean?
     cleaned = input_data["isRoomActive"].copy()
     internet_option = {'false': 0, 'true': 1}
     for i, option in enumerate(input_data["isRoomActive"]):
         if type(option) == str:
             cleaned[i] = internet_option[option]
         else:
-            # happens when internet is nan
+            # happens when is nan
             cleaned[i] = -1
     return cleaned.astype("int64")
 
@@ -176,7 +168,7 @@ def process_pets(input_data):
         if type(option) == str:
             cleaned[i] = options[option]
         else:
-            # happens when internet is nan or Unknown
+            # happens when is nan or Unknown
             cleaned[i] = -1
     return cleaned.astype("int64")
 
@@ -194,7 +186,7 @@ def process_shower(input_data):
         if type(option) == str and option in ['Shared', 'Own']:
             cleaned[i] = options[option]
         else:
-            # happens when internet is nan or Unknown
+            # happens when is nan or Unknown
             cleaned[i] = -1
     return cleaned.astype("int64")
 
@@ -208,46 +200,13 @@ def process_smoking_inside(input_data):
         if type(option) == str:
             cleaned[i] = options[option]
         else:
-            # happens when internet is nan or Unknown
+            # happens when is nan or Unknown
             cleaned[i] = -1
     return cleaned.astype("int64")
 
 
 def process_toilet(input_data):
     return process_kitchen_or_living_or_toilet(input_data, 'toilet')
-
-
-def plot_data(data):
-    # attributes_1 = ["areaSqm", "rent", "roommates"]
-    attributes_1 = ["areaSqm", "rent"]
-
-    d = data[attributes_1].values
-    # d = map(lambda input_x: x if x is not None else 0 for x in input_x["roommates"], d) transform roommate None into 0
-    print(d)
-    x = 2
-    y = 1
-    plt.figure()
-    fig, axes = plt.subplots(x)
-    print(axes.shape)
-    fig.subplots_adjust(hspace=0.5, wspace=0.4)
-
-    for n in range(x):
-        #     print(axes[n])
-        #     print("d: ", list(map(lambda x: 0 if x == 'None' else int(x), d[:,n])))
-        #     d[:,n] = list(map(lambda x: 0 if x == 'None' or x == 'Unknown' else int(x), d[:,n]))
-        axes[n].boxplot(d[:, n])
-        # sns.boxplot(wine_data[:, n], ax=axes[n // 3, n % 3])
-        axes[n].set(title=attributes_1[n])
-    plt.show()
-
-    # plt.figure()
-    # fig, axes = plt.subplots(4, 3)
-    # fig.subplots_adjust(hspace=1, wspace=0.4)
-    # for n in range(12):
-    #     axes[n // 3, n % 3].hist(wine_data[:, n])
-    #     axes[n // 3, n % 3].set(title=attributes[n])
-    # plt.show()
-
 
 if __name__ == '__main__':
     data = read_data('../data/properties.json')

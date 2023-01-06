@@ -76,12 +76,19 @@ def pipeline(config):
 if __name__ == '__main__':
     pipeline(CONFIG)
     results = []
-    for use_amsterdam, (model, params) in tqdm(list(product([True, False], [
+    # for use_amsterdam, (model, params) in tqdm(list(product([True, False], [
+    #     ('decision_tree', {}),
+    #     ('random_forest', {}),
+    #     ('boosted_tree', {}),
+    #     ('mlp', {}),
+    # ]))):    
+    for use_amsterdam, (model, params) in list(product([True, False], [
         ('decision_tree', {}),
         ('random_forest', {}),
         ('boosted_tree', {}),
         ('mlp', {}),
-    ]))):
+    ])):
+    
         config = CONFIG.copy()
         config['filter_city'] = use_amsterdam
         config['city'] = 'Amsterdam'
