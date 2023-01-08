@@ -12,9 +12,12 @@ from toolbox.data import read_data, process_roommates, process_energy_label, pro
     process_shower, process_toilet, process_match_capacity
 
 
-def preprocess_data(config):
+def preprocess_data(config, input_data=None):
     # Preprocess data
-    data = read_data()
+    if(input_data is not None):
+        data = input_data
+    else:
+        data = read_data()
 
     if config['preprocessing'] == 'label_encoder':
         # we need the original city names for the error plots
